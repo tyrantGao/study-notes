@@ -8,4 +8,5 @@ package com.gao.java.string;
  */
 public class StringMethodUseRecord {
 
+
 }
