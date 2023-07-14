@@ -2,6 +2,7 @@ package com.gao.java.collection;
 
 import java.io.Serializable;
 import java.util.AbstractMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -21,6 +22,14 @@ public class MyHashMap<K, V> extends AbstractMap<K, V> implements Cloneable, Ser
 
     static final int DEFAULT_INIT_CAPACITY = 1 << 4;
 
+
+    /**
+     * 最大容量
+     * 为什么是 1 << 30 而不是 1 << 31 ？
+     * 1为10进制数， << 十进制数用2进制表示时向左迁移 30表示迁移30位
+     * int 类型是8个字节，换算2进制后为一个 32位二进制数，二进制中最高位为符号位（1为负，0为正）
+     * 1 << 30 位已经迁移到31位了，如果 1 << 31就迁移到符号位了，所以是 1 << 30,而不是 1 << 31
+     */
     static final int MAXIMUM_CAPACITY = 1 << 30;
 
     static final float DEFAULT_LOAD_FACTOR = 0.75f;
@@ -69,7 +78,9 @@ public class MyHashMap<K, V> extends AbstractMap<K, V> implements Cloneable, Ser
      * hashMap中数组容量计算
      * 1、为什么到 >>> 16位？
      * int 是4个字节，32位，右移16位后刚好高（16）低（16）位做 或（|）运算，得到最多的1；
-     *
+     * 2、为什么要cappacity - 1？
+     * 为了指定容量本身就是2的n次幂数字时，就用它本身数值，而不是一个大于它且最小的2的n次幂
+     * 举例：8如果不 -1，则得到的是 16，当使用 8 -1 时，则为 8
      *
      * @param capacity 指定容量
      * @return int 大于指定容量且最小的2的n次幂数
@@ -193,10 +204,14 @@ public class MyHashMap<K, V> extends AbstractMap<K, V> implements Cloneable, Ser
 
 class Main {
     public static void main(String[] args) {
-        System.out.println(Integer.toUnsignedString(1 << 30, 2));
-        System.out.println(Integer.parseUnsignedInt("1000000000000000000000000000000", 2));
-        System.out.println(getNumPower(1 << 30));
-        //Math.pow()
+//        System.out.println(MyHashMap.tableSizeFor(8));
+        HashMap<String,Integer> hashMap = new HashMap<>(1 << 30);
+        for (int i = 0; i < (1 << 31) -1; i++) {
+            hashMap.put("第"+i+"个参数",i);
+        }
+
+
+
     }
 
     public static int getNumPower(int num) {
