@@ -5,8 +5,8 @@
 
 study-notes
 
-| 模块名称        | 模块简介         |
-| --------------- | ---------------- |
-| java-basis      | java基础学习记录 |
-| design-patterns | 设计模式学习记录 |
+| 模块名称                                                     | 模块简介         |
+| ------------------------------------------------------------ | ---------------- |
+| java-basis                                                   | java基础学习记录 |
+| [design-patterns](https://gitee.com/gwind_gao/study-notes/blob/main/design-patterns/design-pattern.md) | 设计模式学习记录 |
 
