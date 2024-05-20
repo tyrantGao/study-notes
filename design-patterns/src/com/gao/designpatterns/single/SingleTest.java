@@ -2,6 +2,7 @@ package com.gao.designpatterns.single;
 
 import org.junit.Test;
 
+import java.io.*;
 import java.lang.reflect.Constructor;
 
 public class SingleTest {
@@ -105,13 +106,15 @@ public class SingleTest {
         // 值false表示反射的对象应该强制执行Java语言访问检查。
         declaredConstructor.setAccessible(true);
         demo7_reflex_Destroy2 instance1 = declaredConstructor.newInstance();
+        demo7_reflex_Destroy2 instance2 = declaredConstructor.newInstance();
+        System.out.println(instance2 == instance1);
     }
 
     /**
      * 无效处理
      * <p>
      * 在构造方法中处理过后，反射创建对象是否还能执行
-     * (双重检查实现的单例）
+     * (双重检查实现的单例，不能阻止反射对单例模式的破坏）
      *
      * @throws Exception
      */
@@ -124,10 +127,13 @@ public class SingleTest {
         // 值false表示反射的对象应该强制执行Java语言访问检查。
         declaredConstructor.setAccessible(true);
         demo6_reflex_Destroy1 instance1 = declaredConstructor.newInstance();
+        demo6_reflex_Destroy1 instance2 = declaredConstructor.newInstance();
+        System.out.println(instance1 == instance2);
     }
 
     /**
      * 单例模式是否还正常
+     * 静态内部类方式的单例模式可以通过在构造类中处理来阻止反射对于实例化的破坏
      *
      * @throws Exception
      */
@@ -141,4 +147,39 @@ public class SingleTest {
         }
     }
 
+    /**
+     * 序列化对于单例模式的破坏
+     *
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    @Test
+    public void test10() throws IOException, ClassNotFoundException {
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("a.txt"));
+        Demo8_Serialize_Destroy1 instance1 = Demo8_Serialize_Destroy1.getInstance();
+        oos.writeObject(instance1);
+        oos.flush();
+        oos.close();
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream("a.txt"));
+        Demo8_Serialize_Destroy1 instance2 = (Demo8_Serialize_Destroy1) ois.readObject();
+        System.out.println(instance2 == instance1);
+    }
+
+    /**
+     * 解决序列化对于单例模式的破坏（在反序列化类中实现readResolve方法）
+     *
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    @Test
+    public void test11() throws IOException, ClassNotFoundException {
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("a.txt"));
+        Demo8_Serialize_Destroy_Repair instance1 = Demo8_Serialize_Destroy_Repair.getInstance();
+        oos.writeObject(instance1);
+        oos.flush();
+        oos.close();
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream("a.txt"));
+        Demo8_Serialize_Destroy_Repair instance2 = (Demo8_Serialize_Destroy_Repair) ois.readObject();
+        System.out.println(instance2 == instance1);
+    }
 }
